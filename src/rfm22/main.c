@@ -371,34 +371,20 @@ do {						\
 						\
 } while (0)
 
-static void send_pulse_a(void)
+static inline void send_pulse_a(void)
 {
   send_pulse(400, 940);
 }
 
-static void send_pulse_b(void)
+static inline void send_pulse_b(void)
 {
   send_pulse(1005, 340);
 }
 
-static void send_a_1_prolog(void)
+static inline void send_group_a(void)
 {
   send_pulse_a();
   send_pulse_a();
-  send_pulse_a();
-  send_pulse_b();
-  send_pulse_a();
-  send_pulse_b();
-  send_pulse_a();
-  send_pulse_b();
-  send_pulse_a();
-  send_pulse_a();
-  send_pulse_a();
-  send_pulse_b();
-  send_pulse_a();
-  send_pulse_b();
-  send_pulse_a();
-  send_pulse_b();
   send_pulse_a();
   send_pulse_b();
   send_pulse_a();
@@ -407,21 +393,111 @@ static void send_a_1_prolog(void)
   send_pulse_b();
 }
 
-static void send_a_1_on(void)
+static inline void send_group_b(void)
 {
-  send_a_1_prolog();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+}
+
+static inline void send_group_c(void)
+{
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_b();
+}
+
+static inline void send_group_d(void)
+{
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_a();
+}
+
+static inline void send_dev_1(void)
+{
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+}
+
+static inline void send_dev_2(void)
+{
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+}
+
+static inline void send_dev_3(void)
+{
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+}
+
+static inline void send_cmd_on(void)
+{
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
   send_pulse_b();
   send_pulse_b();
   send_pulse_a();
 }
 
-static void send_a_1_off(void)
+static inline void send_cmd_off(void)
 {
-  send_a_1_prolog();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
   send_pulse_a();
   send_pulse_a();
   send_pulse_a();
 }
+
+#define send(__g, __d, __c)	\
+do {				\
+  send_group_ ## __g();		\
+  send_dev_ ## __d();		\
+  send_cmd_ ## __c();		\
+} while (0)
 
 
 /* main */
@@ -437,7 +513,7 @@ int main(void)
   {
     for (i = 0; i != 5; ++i)
     {
-      send_a_1_off();
+      send(a, 3, off);
       _delay_ms(10);
     }
 
