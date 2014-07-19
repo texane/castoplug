@@ -354,28 +354,7 @@ static void rfm22_send(const uint8_t* x, uint8_t n)
 }
 
 
-/* led */
-
-static void led_set(void)
-{
-  DDRB |= 1 << 1;
-  PORTB |= 1 << 1;
-}
-
-static void led_clr(void)
-{
-  DDRB |= 1 << 1;
-  PORTB &= ~(1 << 1);
-}
-
-static void led_xor(void)
-{
-  DDRB |= 1 << 1;
-  PORTB ^= 1 << 1;
-}
-
-
-/* main */
+/* send_xxx routines */
 
 #define send_pulse(__thigh, __tlow)		\
 do {						\
@@ -392,69 +371,73 @@ do {						\
 						\
 } while (0)
 
-static inline void send_pulse_a(void)
+static void send_pulse_a(void)
 {
   send_pulse(400, 940);
 }
 
-static inline void send_pulse_b(void)
+static void send_pulse_b(void)
 {
   send_pulse(1005, 340);
 }
 
-static inline void send_pause(void)
+static void send_a_1_prolog(void)
 {
-  send_pulse(250, 10500);
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
+  send_pulse_a();
+  send_pulse_b();
 }
 
-static inline void send_sync(void)
+static void send_a_1_on(void)
 {
-  send_pulse(250, 2500);
+  send_a_1_prolog();
+  send_pulse_b();
+  send_pulse_b();
+  send_pulse_a();
 }
+
+static void send_a_1_off(void)
+{
+  send_a_1_prolog();
+  send_pulse_a();
+  send_pulse_a();
+  send_pulse_a();
+}
+
+
+/* main */
 
 int main(void)
 {
-  uint8_t x;
+  int i;
 
   uart_setup();
   rfm22_setup();
 
-  /* direct mode */
-  rfm22_csn_high();
-
   while (1)
   {
-    int i;
-
     for (i = 0; i != 5; ++i)
     {
-      send_pulse_a();
-      send_pulse_a();
-      send_pulse_a();
-      send_pulse_b();
-      send_pulse_a();
-      send_pulse_b();
-      send_pulse_a();
-      send_pulse_b();
-      send_pulse_a();
-      send_pulse_a();
-      send_pulse_a();
-      send_pulse_b();
-      send_pulse_a();
-      send_pulse_b();
-      send_pulse_a();
-      send_pulse_b();
-      send_pulse_a();
-      send_pulse_b();
-      send_pulse_a();
-      send_pulse_b();
-      send_pulse_a();
-      send_pulse_b();
-      send_pulse_b();
-      send_pulse_b();
-
-      if (i != 4) send_pulse_a();
-
+      send_a_1_off();
       _delay_ms(10);
     }
 
