@@ -12,6 +12,8 @@ int main(void)
 
   while (1)
   {
+    /* turn off the a:3 wall outlet */
+    /* send 5 consecutive frames for redundancy */
     for (i = 0; i != 5; ++i)
     {
       castoplug_send(a, 3, off);
